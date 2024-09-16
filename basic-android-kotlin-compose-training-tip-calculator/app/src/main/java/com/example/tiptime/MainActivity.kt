@@ -21,6 +21,7 @@ import android.widget.Switch
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -37,6 +38,7 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -57,6 +59,7 @@ import androidx.compose.ui.unit.dp
 import com.example.tiptime.ui.theme.TipTimeTheme
 import java.text.NumberFormat
 import androidx.compose.material3.Switch
+import androidx.compose.ui.res.painterResource
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -117,7 +120,9 @@ fun TipTimeLayout() {
                 keyboardType = KeyboardType.Number,
                 imeAction = ImeAction.Next
             ),
+            leadingIcon = R.drawable.money,
         )
+
         EditNumberField(
             label = R.string.how_was_the_service,
             value = tipInput,
@@ -127,6 +132,7 @@ fun TipTimeLayout() {
                 keyboardType = KeyboardType.Number,
                 imeAction = ImeAction.Done
             ),
+            leadingIcon = R.drawable.percent,
         )
         Spacer(modifier = Modifier.height(150.dp))
         RoundTheTipRow(
@@ -168,6 +174,7 @@ fun EditNumberField(
     modifier: Modifier = Modifier,
     @StringRes label: Int,
     keyboardOptions: KeyboardOptions,
+    @DrawableRes leadingIcon: Int,
 ) {
     //var amountInput by remember { mutableStateOf("") }
     //val amount = amountInput.toDoubleOrNull() ?: 0.0
@@ -180,6 +187,7 @@ fun EditNumberField(
         singleLine = true,
         //keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         keyboardOptions = keyboardOptions,
+        leadingIcon = { Icon(painter = painterResource(id = leadingIcon), null) },
     )
 }
 
