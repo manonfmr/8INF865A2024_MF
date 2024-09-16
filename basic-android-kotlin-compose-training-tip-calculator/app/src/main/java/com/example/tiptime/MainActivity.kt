@@ -20,6 +20,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -71,6 +72,11 @@ fun TipTimeLayout() {
 
     val amount = amountInput.toDoubleOrNull() ?: 0.0
     val tip = calculateTip(amount)
+
+    var tipInput by remember { mutableStateOf("") }
+    val tipPercent = tipInput.toDoubleOrNull() ?: 0.0
+    val tipBis = calculateTip(amount, tipPercent)
+
     Column(
         modifier = Modifier
             .statusBarsPadding()
@@ -86,7 +92,7 @@ fun TipTimeLayout() {
                 .align(alignment = Alignment.Start)
         )
         Text(
-            text = stringResource(R.string.tip_amount, tip),
+            text = stringResource(R.string.tip_amount, tipBis),
             style = MaterialTheme.typography.displaySmall
         )
         EditNumberField(
@@ -94,7 +100,14 @@ fun TipTimeLayout() {
             onValueChange = { amountInput = it },
             modifier = Modifier
                 .padding(bottom = 32.dp)
-                .fillMaxWidth()
+                .fillMaxWidth(),
+            label = R.string.bill_amount,
+        )
+        EditNumberField(
+            label = R.string.how_was_the_service,
+            value = tipInput,
+            onValueChange = { tipInput = it },
+            modifier = Modifier.padding(bottom = 32.dp).fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(150.dp))
     }
@@ -124,7 +137,8 @@ fun TipTimeLayoutPreview() {
 fun EditNumberField(
     value: String,
     onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    @StringRes label: Int,
 ) {
     //var amountInput by remember { mutableStateOf("") }
     //val amount = amountInput.toDoubleOrNull() ?: 0.0
@@ -133,11 +147,10 @@ fun EditNumberField(
         value = value,
         onValueChange = onValueChange,
         modifier = modifier,
-        label = {
-            Text(stringResource(R.string.bill_amount))
-                },
+        label = { Text(stringResource(label)) },
         singleLine = true,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-    )
+
+        )
 }
 
