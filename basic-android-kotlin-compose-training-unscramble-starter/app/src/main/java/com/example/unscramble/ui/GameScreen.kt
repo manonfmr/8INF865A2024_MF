@@ -121,7 +121,12 @@ fun GameScreen(gameViewModel: GameViewModel = viewModel()) {
         }
         GameStatus(score = gameUiState.score, modifier = Modifier.padding(20.dp))
     }
-
+    if (gameUiState.isGameOver) {
+        FinalScoreDialog(
+            score = gameUiState.score,
+            onPlayAgain = { gameViewModel.resetGame() }
+        )
+    }
 }
 
 @Composable
@@ -211,6 +216,8 @@ fun GameLayout(currentScrambledWord: String,
 /*
  * Creates and shows an AlertDialog with final score.
  */
+
+}
 @Composable
 private fun FinalScoreDialog(
     score: Int,
@@ -226,7 +233,7 @@ private fun FinalScoreDialog(
             // onCloseRequest.
         },
         title = { Text(text = stringResource(R.string.congratulations)) },
-        text = { Text(text = stringResource(R.string.you_scored, score)) },
+        text = { Text(stringResource(R.string.you_scored, score)) }
         modifier = modifier,
         dismissButton = {
             TextButton(
