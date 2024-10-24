@@ -88,7 +88,8 @@ fun GameScreen(gameViewModel: GameViewModel = viewModel()) {
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .padding(mediumPadding)
+                .padding(mediumPadding),
+            wordCount = gameUiState.currentWordCount,
         )
         Column(
             modifier = Modifier
@@ -109,7 +110,7 @@ fun GameScreen(gameViewModel: GameViewModel = viewModel()) {
             }
 
             OutlinedButton(
-                onClick = { },
+                onClick = { gameViewModel.skipWord() },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
@@ -118,8 +119,7 @@ fun GameScreen(gameViewModel: GameViewModel = viewModel()) {
                 )
             }
         }
-
-        GameStatus(score = 0, modifier = Modifier.padding(20.dp))
+        GameStatus(score = gameUiState.score, modifier = Modifier.padding(20.dp))
     }
 
 }
@@ -143,7 +143,8 @@ fun GameLayout(currentScrambledWord: String,
                userGuess: String,
                onUserGuessChanged: (String) -> Unit,
                onKeyboardDone: () -> Unit,
-               modifier: Modifier = Modifier
+               modifier: Modifier = Modifier,
+               wordCount: Int,
 {
     val mediumPadding = dimensionResource(R.dimen.padding_medium)
 
@@ -163,6 +164,7 @@ fun GameLayout(currentScrambledWord: String,
                 modifier = modifier.align(Alignment.CenterHorizontally)
             )
             Text(
+                text = stringResource(R.string.word_count, wordCount),
                 modifier = Modifier
                     .clip(shapes.medium)
                     .background(colorScheme.surfaceTint)
