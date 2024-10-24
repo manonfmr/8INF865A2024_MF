@@ -48,4 +48,15 @@ class GameViewModel : ViewModel() {
     fun updateUserGuess(guessedWord: String){
         userGuess = guessedWord
     }
+
+    fun checkUserGuess() {
+
+        if (userGuess.equals(currentWord, ignoreCase = true)) {
+        }
+        else {
+            _uiState.update { currentState -> currentState.copy(isGuessedWordWrong = true)
+            }
+        }
+        updateUserGuess("")
+    }
 }

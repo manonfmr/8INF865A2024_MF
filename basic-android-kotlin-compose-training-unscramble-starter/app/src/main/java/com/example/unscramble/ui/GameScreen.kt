@@ -81,6 +81,10 @@ fun GameScreen(gameViewModel: GameViewModel = viewModel()) {
         )
         GameLayout(
             currentScrambledWord = gameUiState.currentScrambledWord,
+            userGuess = gameViewModel.userGuess,
+            onUserGuessChanged = { gameViewModel.updateUserGuess(it) },
+            onKeyboardDone = { gameViewModel.checkUserGuess() },
+            isGuessWrong = gameUiState.isGuessedWordWrong,
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
@@ -96,7 +100,7 @@ fun GameScreen(gameViewModel: GameViewModel = viewModel()) {
 
             Button(
                 modifier = Modifier.fillMaxWidth(),
-                onClick = { }
+                onClick = { gameViewModel.checkUserGuess()}
             ) {
                 Text(
                     text = stringResource(R.string.submit),
@@ -134,11 +138,12 @@ fun GameStatus(score: Int, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun GameLayout(modifier: Modifier = Modifier,
-               currentScrambledWord = gameUiState.currentScrambledWord,
-               userGuess = gameViewModel.userGuess,
-               onUserGuessChanged = { gameViewModel.updateUserGuess(it) },
-               onKeyboardDone = { },
+fun GameLayout(currentScrambledWord: String,
+               isGuessWrong: Boolean,
+               userGuess: String,
+               onUserGuessChanged: (String) -> Unit,
+               onKeyboardDone: () -> Unit,
+               modifier: Modifier = Modifier
 {
     val mediumPadding = dimensionResource(R.dimen.padding_medium)
 
@@ -182,13 +187,20 @@ fun GameLayout(modifier: Modifier = Modifier,
                 modifier = Modifier.fillMaxWidth(),
                 onValueChange = onUserGuessChanged,
                 label = { Text(stringResource(R.string.enter_your_word)) },
-                isError = false,
+                isError = isGuessWrong,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     imeAction = ImeAction.Done
                 ),
                 keyboardActions = KeyboardActions(
                     onDone = { onKeyboardDone() }
                 ),
+                label = {
+                    if (isGuessWrong) {
+                        Text(stringResource(R.string.wrong_guess))
+                    } else {
+                        Text(stringResource(R.string.enter_your_word))
+                    }
+                },
             )
         }
     }
