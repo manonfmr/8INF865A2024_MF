@@ -55,9 +55,15 @@ import androidx.compose.ui.unit.sp
 import com.example.unscramble.R
 import com.example.unscramble.ui.theme.UnscrambleTheme
 
+
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+
+
 @Composable
-fun GameScreen() {
+fun GameScreen(gameViewModel: GameViewModel = viewModel()) {
     val mediumPadding = dimensionResource(R.dimen.padding_medium)
+    val gameUiState by gameViewModel.uiState.collectAsState()
 
     Column(
         modifier = Modifier
@@ -74,6 +80,7 @@ fun GameScreen() {
             style = typography.titleLarge,
         )
         GameLayout(
+            currentScrambledWord = gameUiState.currentScrambledWord,
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
@@ -110,6 +117,7 @@ fun GameScreen() {
 
         GameStatus(score = 0, modifier = Modifier.padding(20.dp))
     }
+
 }
 
 @Composable
@@ -126,7 +134,12 @@ fun GameStatus(score: Int, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun GameLayout(modifier: Modifier = Modifier) {
+fun GameLayout(modifier: Modifier = Modifier,
+               currentScrambledWord = gameUiState.currentScrambledWord,
+               userGuess = gameViewModel.userGuess,
+               onUserGuessChanged = { gameViewModel.updateUserGuess(it) },
+               onKeyboardDone = { },
+{
     val mediumPadding = dimensionResource(R.dimen.padding_medium)
 
     Card(
@@ -137,7 +150,13 @@ fun GameLayout(modifier: Modifier = Modifier) {
             verticalArrangement = Arrangement.spacedBy(mediumPadding),
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(mediumPadding)
+
         ) {
+            Text(
+                text = currentScrambledWord,
+                fontSize = 45.sp,
+                modifier = modifier.align(Alignment.CenterHorizontally)
+            )
             Text(
                 modifier = Modifier
                     .clip(shapes.medium)
@@ -158,24 +177,18 @@ fun GameLayout(modifier: Modifier = Modifier) {
                 style = typography.titleMedium
             )
             OutlinedTextField(
-                value = "",
+                value = userGuess,
                 singleLine = true,
-                shape = shapes.large,
                 modifier = Modifier.fillMaxWidth(),
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = colorScheme.surface,
-                    unfocusedContainerColor = colorScheme.surface,
-                    disabledContainerColor = colorScheme.surface,
-                ),
-                onValueChange = { },
+                onValueChange = onUserGuessChanged,
                 label = { Text(stringResource(R.string.enter_your_word)) },
                 isError = false,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     imeAction = ImeAction.Done
                 ),
                 keyboardActions = KeyboardActions(
-                    onDone = { }
-                )
+                    onDone = { onKeyboardDone() }
+                ),
             )
         }
     }
